@@ -1,0 +1,59 @@
+body
+{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    margin: 0%;
+    padding: 0%;
+    color: white;
+    background-color: rgb(92, 141, 141);
+}
+.login_box
+{
+
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 5%;
+    padding: 0%;
+    border-radius: 20px;
+    padding: 2%;
+    background-color: darkslategray;
+    box-shadow: 0px 0px 10px black;
+}
+#name
+{
+    padding: 1%;
+    border-radius: 10px;
+    border: 1px solid white;
+    margin-right: 5%;
+}
+#surname
+{
+    padding: 1%;
+    border-radius: 10px;
+    border: 1px solid white;
+}
+#email
+{
+    margin-top: 2%;
+    padding: 1%;
+    border-radius: 10px;
+    border: 1px solid white;
+    width: 40%;
+}
+
+#password
+{
+    margin-top: 2%;
+    padding: 1%;
+    border-radius: 10px;
+    border: 1px solid white;
+    width: 40%;
+}
+
+#submit
+{
+    margin-top: 2%;
+    padding: 1%;
+    border-radius: 10px;
+    border: 1px solid white;
+    width: 40%;
+}
