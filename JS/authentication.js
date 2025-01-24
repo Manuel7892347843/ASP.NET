@@ -1,12 +1,9 @@
-// Import the functions you need from the SDKs you need
+// Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
 import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Configurazione di Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyB8l98JoZyg6AYnylCG2IT9l59oB-a6chU",
     authDomain: "calendardatabase-efef9.firebaseapp.com",
@@ -17,10 +14,12 @@ const firebaseConfig = {
     measurementId: "G-BFV2ZQ0DD0"
 };
 
-// Initialize Firebase
+// Inizializza Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const auth = getAuth();
+const db = getFirestore();
 
+// Funzione per mostrare i messaggi
 function showMessage(message, divId){
     var messageDiv = document.getElementById(divId);
     messageDiv.style.display = "block";
@@ -31,6 +30,23 @@ function showMessage(message, divId){
     }, 5000);
 }
 
+// Funzione per mostrare il calendario e nascondere i form
+function showCalendar() {
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const formContainer = document.querySelector('.form-container');
+    const calendarContainer = document.getElementById('calendar-container');
+
+    // Nascondiamo i form
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'none';
+    formContainer.style.display = 'none';
+    
+    // Mostriamo il calendario
+    calendarContainer.style.display = 'block';
+}
+
+// Registrazione
 const signUp = document.getElementById('submitRegister');
 signUp.addEventListener('click', (event) => {
     event.preventDefault();
@@ -50,23 +66,16 @@ signUp.addEventListener('click', (event) => {
         return;
     }
 
-    const auth = getAuth();
-    const db = getFirestore();
-
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user = userCredential.user;
-            const userData = {
-                email: email,
-                password: password,
-                name: name,
-                surname: surname
-            };
+            const userData = { email, password, name, surname };
+
             showMessage('Account Created Successfully!', 'signUpMessage');
             const docRef = doc(db, "user", user.uid);
             setDoc(docRef, userData)
                 .then(() => {
-                    window.location.href = 'authentication.html';
+                    showCalendar();
                 })
                 .catch((error) => {
                     console.error("Error writing document:", error);
@@ -85,28 +94,27 @@ signUp.addEventListener('click', (event) => {
         });
 });
 
+// Login
 const signIn = document.getElementById('submitLogin');
 signIn.addEventListener('click', (event) =>{
     event.preventDefault();
 
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
-    const auth = getAuth();
 
     signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) =>{
-        showMessage('login is successful', 'signInMessage');
+        showMessage('Login successful', 'signInMessage');
         const user = userCredential.user;
         localStorage.setItem('loggedInUserId', user.uid);
-        window.location.href = 'index.html';
+        showCalendar();
     })
     .catch((error) =>{
         const errorCode = error.code;
         if(errorCode === 'auth/invalid-credential'){
             showMessage('Incorrect Email or Password', 'signInMessage');
+        } else {
+            showMessage('Account does not exist', 'signInMessage');
         }
-        else{
-            showMessage('Account does not Exist', 'signInMessage');
-        }
-    })
+    });
 });

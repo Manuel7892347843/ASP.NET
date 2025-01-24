@@ -1,101 +1,166 @@
+/* Stile generale per il body */
 body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f9;
-            flex-direction: column; /* Per mettere il titolo sopra */
-            text-align: center;
-        }
-        h1 {
-            font-size: 2rem;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .calendar {
-            border: 1px solid #ccc;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            width: 350px;
-        }
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .calendar-header button {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #f1f1f1;
-        }
-        .calendar-header button:hover {
-            background-color: #ddd;
-        }
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-        }
-        .calendar-grid div {
-            padding: 10px;
-            text-align: center;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .calendar-grid div:hover {
-            background-color: #f1f1f1;
-        }
-        .event-input {
-            display: none;
-            margin-top: 10px;
-        }
-        .event-input input, .event-input textarea {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-        }
-        .event-input button {
-            padding: 10px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        .event-input .remove-button {
-            background-color: #f44336;
-            margin-top: 10px;
-        }
-        /* Popup per il login */
-        #login-popup {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        #login-popup .popup-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            width: 300px;
-        }
-        #login-popup button {
-            padding: 10px;
-            background-color: #2196F3;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: rgb(0, 0, 0);
+    background-color: rgb(92, 141, 141);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column; /* Per mettere il titolo sopra */
+    text-align: center;
+}
+
+/* Stile per l'intestazione */
+h1 {
+    font-size: 2rem;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+/* Stile per la form container */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5%;
+    background-color: rgb(47, 65, 79);
+    box-shadow: 0px 0px 20px black;
+    border-radius: 20px;
+    padding: 3%;
+    width: 60%;
+    max-width: 800px;
+    transition: background-color 0.5s ease; /* Effetto di transizione cambio colore */
+}
+
+/* Stile per i form di login e registrazione */
+.login_box {
+    width: 100%;
+    text-align: center;
+    transition: opacity 0.5s ease; /* Effetto di opacità */
+}
+
+/* Transizioni per le sezioni del form (login/registrazione) */
+.form-section {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.form-section.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Input dei campi del form */
+input[type="text"], input[type="email"], input[type="password"] {
+    width: 90%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid white;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+/* Pulsanti di invio dei form */
+input[type="submit"], button {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid white;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    font-size: 1rem;
+    cursor: pointer;
+    width: 60%;
+}
+
+/* Hover dei pulsanti */
+input[type="submit"]:hover, button:hover {
+    background-color: #ddd;
+}
+
+/* Stile per il calendario */
+.calendar {
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 350px;
+}
+
+/* Header del calendario */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-header button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+}
+
+.calendar-header button:hover {
+    background-color: #ddd;
+}
+
+/* Griglia del calendario */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-grid div {
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.calendar-grid div:hover {
+    background-color: #f1f1f1;
+}
+
+/* Sezione di inserimento evento */
+.event-input {
+    display: none;
+    margin-top: 10px;
+}
+
+.event-input input, .event-input textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.event-input button {
+    padding: 10px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.event-input .remove-button {
+    background-color: #f44336;
+    margin-top: 10px;
+}
+
+/* Rimuovere il contorno blu */
+* {
+    outline: none !important;
+}
+
+/* Oppure, se desideri rimuoverlo solo per i pulsanti e gli input */
+button:focus, input:focus {
+    outline: none !important;
+}
