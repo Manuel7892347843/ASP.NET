@@ -5,12 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendario</title>
     <script type="module" src="JS/index.js"></script>
+    <link rel="stylesheet" href="CSS/style_calendar.css">
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js'></script>
 </head>
 <body>
-    <h1>Calendario</h1>
+    <!-- Informazioni Account login
     <div>Name: <span id="loggedUserName"></span></div>  
     <div>Surname: <span id="loggedUserSurname"></span></div>  
     <div>Email: <span id="loggedUserEmail"></span></div> 
     <button id="logout">Logout</button> 
+    -->
+
+    
+    <h1>Calendario</h1>
+
+    <!-- Popup di login -->
+    <div id="login-popup">
+        <div class="popup-content">
+            <h2>Accedi per continuare</h2>
+            <p>Devi effettuare il login per accedere al calendario. Clicca qui per andare alla pagina di login.</p>
+            <button onclick="redirectToLogin()">Vai al Login</button>
+        </div>
+    </div>
+
+    <div class="calendar">
+        <div class="calendar-header">
+            <button id="prev-month" onclick="changeMonth(-1)">← Precedente</button>
+            <span id="month-year"></span>
+            <button id="next-month" onclick="changeMonth(1)">Successivo →</button>
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+
+        <div class="event-input" id="event-input">
+            <input type="text" id="event-title" placeholder="Titolo evento">
+            <input type="time" id="event-time">
+            <textarea id="event-description" placeholder="Descrizione evento"></textarea>
+            <button onclick="saveEvent()">Salva Evento</button>
+            <button class="remove-button" onclick="removeEvent()">Rimuovi Evento</button>
+        </div>
+    </div>
+
+    <script src="JS/calendar.js"></script>
+    <script src="JS/popuplogin.js"></script>
 </body>
 </html>
