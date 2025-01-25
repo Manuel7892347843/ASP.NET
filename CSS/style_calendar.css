@@ -154,13 +154,3 @@ input[type="submit"]:hover, button:hover {
     background-color: #f44336;
     margin-top: 10px;
 }
-
-/* Rimuovere il contorno blu */
-* {
-    outline: none !important;
-}
-
-/* Oppure, se desideri rimuoverlo solo per i pulsanti e gli input */
-button:focus, input:focus {
-    outline: none !important;
-}

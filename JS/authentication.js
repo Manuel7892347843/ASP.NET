@@ -1,7 +1,7 @@
 // Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+import { getFirestore, setDoc, getDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
 
 // Configurazione di Firebase
 const firebaseConfig = {
@@ -19,38 +19,80 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
 
-// Funzione per mostrare i messaggi
-function showMessage(message, divId){
-    var messageDiv = document.getElementById(divId);
+// Elementi del DOM
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const calendarContainer = document.getElementById('calendar-container');
+const formContainer = document.querySelector('.form-container');
+const toggleToRegister = document.getElementById('toggleToRegister');
+const toggleToLogin = document.getElementById('toggleToLogin');
+const logoutButton = document.getElementById('logout');
+
+// Funzione per mostrare messaggi
+function showMessage(message, divId) {
+    const messageDiv = document.getElementById(divId);
+    if (!messageDiv) return;
+
     messageDiv.style.display = "block";
     messageDiv.innerHTML = message;
     messageDiv.style.opacity = 1;
-    setTimeout(function(){
+    setTimeout(() => {
         messageDiv.style.opacity = 0;
     }, 5000);
 }
 
-// Funzione per mostrare il calendario e nascondere i form
-function showCalendar() {
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    const formContainer = document.querySelector('.form-container');
-    const calendarContainer = document.getElementById('calendar-container');
+// Funzione per aggiornare la UI in base allo stato di autenticazione
+function updateUIForAuthenticatedUser(user) {
+    if (user) {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'none';
+        formContainer.style.display = 'none';
+        calendarContainer.style.display = 'block';
+        logoutButton.style.display = 'block';
 
-    // Nascondiamo i form
-    loginForm.style.display = 'none';
-    registerForm.style.display = 'none';
-    formContainer.style.display = 'none';
-    
-    // Mostriamo il calendario
-    calendarContainer.style.display = 'block';
+        const docRef = doc(db, "user", user.uid);
+        getDoc(docRef).then((docSnap) => {
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                document.getElementById('loggedUserName').innerText = userData.name || '';
+                document.getElementById('loggedUserEmail').innerText = userData.email || '';
+                document.getElementById('loggedUserSurname').innerText = userData.surname || '';
+            } else {
+                console.log("No user data found!");
+            }
+        }).catch((error) => {
+            console.error("Error fetching user data:", error);
+        });
+    } else {
+        showLoginForm();
+    }
 }
 
-// Registrazione
-const signUp = document.getElementById('submitRegister');
-signUp.addEventListener('click', (event) => {
-    event.preventDefault();
+// Funzione per mostrare il form di login
+function showLoginForm() {
+    formContainer.style.backgroundColor = 'darkslategray';
+    loginForm.style.display = 'block';
+    registerForm.style.display = 'none';
+    calendarContainer.style.display = 'none';
+    logoutButton.style.display = 'none';
+}
 
+// Funzione per mostrare il form di registrazione
+function showRegisterForm() {
+    formContainer.style.backgroundColor = 'rgb(53, 47, 79)';
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'block';
+    calendarContainer.style.display = 'none';
+    logoutButton.style.display = 'none';
+}
+
+// Listener per alternare i form
+toggleToRegister.addEventListener('click', showRegisterForm);
+toggleToLogin.addEventListener('click', showLoginForm);
+
+// Registrazione utente
+document.getElementById('submitRegister').addEventListener('click', (event) => {
+    event.preventDefault();
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
     const name = document.getElementById('registerName').value;
@@ -69,52 +111,56 @@ signUp.addEventListener('click', (event) => {
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user = userCredential.user;
-            const userData = { email, password, name, surname };
+            const userData = { email, name, surname };
 
+            return setDoc(doc(db, "user", user.uid), userData);
+        })
+        .then(() => {
             showMessage('Account Created Successfully!', 'signUpMessage');
-            const docRef = doc(db, "user", user.uid);
-            setDoc(docRef, userData)
-                .then(() => {
-                    showCalendar();
-                })
-                .catch((error) => {
-                    console.error("Error writing document:", error);
-                });
+            updateUIForAuthenticatedUser(auth.currentUser);
         })
         .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.error("Error code:", errorCode);
-            console.error("Error message:", errorMessage);
-            if (errorCode === 'auth/email-already-in-use') {
+            if (error.code === 'auth/email-already-in-use') {
                 showMessage('Email Address Already Exists!', 'signUpMessage');
             } else {
-                showMessage('Unable to create User: ' + errorMessage, 'signUpMessage');
+                showMessage('Unable to create user: ' + error.message, 'signUpMessage');
             }
         });
 });
 
-// Login
-const signIn = document.getElementById('submitLogin');
-signIn.addEventListener('click', (event) =>{
+// Login utente
+document.getElementById('submitLogin').addEventListener('click', (event) => {
     event.preventDefault();
-
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
     signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) =>{
-        showMessage('Login successful', 'signInMessage');
-        const user = userCredential.user;
-        localStorage.setItem('loggedInUserId', user.uid);
-        showCalendar();
-    })
-    .catch((error) =>{
-        const errorCode = error.code;
-        if(errorCode === 'auth/invalid-credential'){
-            showMessage('Incorrect Email or Password', 'signInMessage');
-        } else {
-            showMessage('Account does not exist', 'signInMessage');
-        }
-    });
+        .then((userCredential) => {
+            showMessage('Login successful', 'signInMessage');
+            updateUIForAuthenticatedUser(userCredential.user);
+        })
+        .catch((error) => {
+            if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                showMessage('Incorrect Email or Password', 'signInMessage');
+            } else {
+                showMessage('Error: ' + error.message, 'signInMessage');
+            }
+        });
+});
+
+// Logout utente
+logoutButton.addEventListener('click', () => {
+    signOut(auth)
+        .then(() => {
+            localStorage.removeItem('loggedInUserId');
+            window.location.href = 'index.html';
+        })
+        .catch((error) => {
+            console.error('Error signing out:', error);
+        });
+});
+
+// Monitoraggio dello stato di autenticazione
+onAuthStateChanged(auth, (user) => {
+    updateUIForAuthenticatedUser(user);
 });

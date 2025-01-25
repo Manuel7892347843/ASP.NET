@@ -148,8 +148,8 @@ const daysOfWeek = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
         });
     }
 
-    // Controlla ogni secondo se ci sono eventi
-    setInterval(checkEventNotifications, 1000);
-
     // Renderizza il calendario iniziale
     renderCalendar();
+    
+    // Controlla ogni secondo se ci sono eventi
+    setInterval(checkEventNotifications, 1000);
